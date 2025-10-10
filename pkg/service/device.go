@@ -48,7 +48,7 @@ func GetDeviceManager() *deviceManager {
 
 // 启动心跳检查器
 func (dm *deviceManager) startHeartbeatChecker() {
-	dm.heartbeatChecker = time.NewTicker(3 * time.Second) // 每3秒检查一次
+	dm.heartbeatChecker = time.NewTicker(30 * time.Second) // 每30秒检查一次
 	go func() {
 		for {
 			select {
