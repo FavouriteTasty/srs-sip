@@ -238,18 +238,25 @@ func (dm *deviceManager) UpdateChannels(deviceID string, list ...models.ChannelI
 		return true
 	})
 
-	slog.Error("UpdateChannels: manufacturer not found", "manufacturer", list[0].Manufacturer)
-	parser, ok := parserRegistry.GetParser(list[0].Manufacturer)
-	if !ok {
-		return fmt.Errorf("par: %s", list[0].Manufacturer)
+	// 这个只依赖第一个 manufacturer 的 parser 是不合理的
+	groups := make(map[string][]models.ChannelInfo)
+	for _, item := range list {
+		groups[item.Manufacturer] = append(groups[item.Manufacturer], item)
+	}
+	allChannels := make([]models.ChannelInfo, 0)
+	for manu, items := range groups {
+		parser, ok := parserRegistry.GetParser(manu)
+		if !ok {
+			return fmt.Errorf("no parser for manufacturer: %s", manu)
+		}
+		channels, err := parser.ParseChannels(items...)
+		if err != nil {
+			return fmt.Errorf("failed to parse channels for %s: %v", manu, err)
+		}
+		allChannels = append(allChannels, channels...)
 	}
 
-	channels, err := parser.ParseChannels(list...)
-	if err != nil {
-		return fmt.Errorf("failed to parse channels: %v", err)
-	}
-
-	for _, channel := range channels {
+	for _, channel := range allChannels {
 		device.ChannelMap.Store(channel.DeviceID, channel)
 	}
 	dm.devices.Store(deviceID, device)
