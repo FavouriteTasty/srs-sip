@@ -15,4 +15,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    proxy: {
+      '/srs-sip': { target: 'http://localhost:8025', changeOrigin: true, },
+    }
+  }
 })

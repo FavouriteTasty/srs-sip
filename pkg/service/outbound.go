@@ -211,6 +211,7 @@ func (s *UAS) isPublishing(key string) bool {
 func (s *UAS) Invite(req models.InviteRequest) (*Session, error) {
 	key := fmt.Sprintf("%d:%s:%s:%d:%d:%d:%d", req.MediaServerId, req.DeviceID, req.ChannelID, req.SubStream, req.PlayType, req.StartTime, req.EndTime)
 
+	slog.Debug("Invite key", "key", key, "DeviceId", req.DeviceID)
 	// Check if stream already exists
 	if s.isPublishing(key) {
 		// Stream exists, increase reference count
@@ -569,6 +570,37 @@ func (s *UAS) ConfigDownload(deviceID string) error {
 	})
 	if err != nil {
 		return errors.Wrapf(err, "build device config request error")
+	}
+
+	_, err = s.handleSipTransaction(req)
+	return err
+}
+
+// UpdateChannelsFromDevice 从下级平台更新设备通道列表
+func (s *UAS) UpdateChannelsFromDevice(deviceID string) error {
+	var deviceConfigXML = `<?xml version="1.0"?>
+	<Query>
+	<CmdType>Catalog</CmdType>
+	<SN>%d</SN>
+	<DeviceID>%s</DeviceID>
+	</Query>
+	`
+
+	d, ok := DM.GetDevice(deviceID)
+	if !ok {
+		return errors.Errorf("device %s not found", deviceID)
+	}
+
+	body := fmt.Sprintf(deviceConfigXML, s.getSN(), deviceID)
+
+	req, err := stack.NewMessageRequest([]byte(body), stack.OutboundConfig{
+		Via:       d.SourceAddr,
+		To:        d.DeviceID,
+		From:      s.conf.GB28181.Serial,
+		Transport: d.NetworkType,
+	})
+	if err != nil {
+		return errors.Wrapf(err, "update catalog from device request error")
 	}
 
 	_, err = s.handleSipTransaction(req)

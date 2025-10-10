@@ -5,20 +5,6 @@ MAIN_PATH="main/main.go"
 VUE_DIR="html/NextGB"
 CONFIG_FILE="conf/config.yaml"
 
-# 检测操作系统类型
-case "$(uname -s)" in
-    Darwin*)    
-        echo "Mac OS X detected"
-        ;;
-    Linux*)     
-        echo "Linux detected"
-        ;;
-    *)          
-        echo "Unknown operating system"
-        exit 1
-        ;;
-esac
-
 build() {
     echo "Building Go binary..."
     mkdir -p objs
@@ -38,7 +24,7 @@ clean() {
     echo "Cleaning..."
     rm -rf ${BINARY_NAME}
     rm -rf ${VUE_DIR}/dist
-    rm -rf ${VUE_DIR}/node_modules
+    # rm -rf ${VUE_DIR}/node_modules
     rm -rf objs/html
     rm -rf objs/${CONFIG_FILE}
 }

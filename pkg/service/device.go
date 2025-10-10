@@ -364,6 +364,13 @@ func (p *UniviewParser) ParseChannels(list ...models.ChannelInfo) ([]models.Chan
 	return videoChannels, nil
 }
 
+// xtrive channel parser implementation
+type XtriveParser struct{}
+
+func (p *XtriveParser) ParseChannels(list ...models.ChannelInfo) ([]models.ChannelInfo, error) {
+	return list, nil
+}
+
 // Common channel parser implementation - used as fallback when no specific parser is found
 type CommonParser struct{}
 
@@ -376,5 +383,6 @@ func init() {
 	parserRegistry.RegisterParser("Hikvision", &HikvisionParser{})
 	parserRegistry.RegisterParser("DAHUA", &DahuaParser{})
 	parserRegistry.RegisterParser("UNIVIEW", &UniviewParser{})
+	parserRegistry.RegisterParser("xstrive", &XtriveParser{})
 	parserRegistry.RegisterParser("Common", &CommonParser{})
 }

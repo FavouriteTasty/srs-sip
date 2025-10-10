@@ -27,6 +27,8 @@ func (h *HttpApiServer) RegisterRoutes(router *mux.Router) {
 
 	router.HandleFunc("/query-record", h.ApiQueryRecord).Methods(http.MethodPost)
 
+	router.HandleFunc("/update-channels", h.ApiUpdateChannelsFromDevice).Methods(http.MethodPost)
+
 	// 媒体服务器相关接口，查询，新增，删除，用restful风格
 	router.HandleFunc("/media-servers", h.ApiListMediaServers).Methods(http.MethodGet)
 	router.HandleFunc("/media-servers", h.ApiAddMediaServer).Methods(http.MethodPost)
@@ -276,6 +278,21 @@ func (h *HttpApiServer) ApiSetDefaultMediaServer(w http.ResponseWriter, r *http.
 	}
 
 	if err := service.MediaDB.SetDefaultMediaServer(id); err != nil {
+		h.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"msg": err.Error()})
+		return
+	}
+
+	h.RespondWithJSON(w, 0, map[string]string{"msg": "success"})
+}
+
+func (h *HttpApiServer) ApiUpdateChannelsFromDevice(w http.ResponseWriter, r *http.Request) {
+	var req models.UpdateChannelsRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.RespondWithJSON(w, http.StatusBadRequest, map[string]string{"msg": err.Error()})
+		return
+	}
+
+	if err := h.sipSvr.Uas.UpdateChannelsFromDevice(req.DeviceID); err != nil {
 		h.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"msg": err.Error()})
 		return
 	}

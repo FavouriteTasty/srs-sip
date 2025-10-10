@@ -9,6 +9,7 @@ import {
   useDevicesLoading,
 } from '@/stores/devices'
 import type { Device, ChannelInfo } from '@/api/types'
+import { deviceApi } from '@/api'
 
 const devices = useDevices()
 const allChannels = useChannels()
@@ -29,6 +30,7 @@ const fetchDevices = async (showError = true) => {
 
 interface ExtendedDevice extends Device {
   channelCount?: number
+  loadingUpdateChannelsFromDevice?: boolean
 }
 
 const searchQuery = ref('')
@@ -47,6 +49,7 @@ const formatDeviceData = (device: Device): ExtendedDevice => {
     channelCount: allChannels.value.filter(
       (channel: ChannelInfo) => channel.parent_id === device.device_id,
     ).length,
+    loadingUpdateChannelsFromDevice: false,
   }
 }
 
@@ -82,6 +85,14 @@ const showDeviceDetails = async (device: ExtendedDevice) => {
   channels.value = allChannels.value.filter(
     (channel: ChannelInfo) => channel.parent_id === device.device_id,
   )
+}
+
+const updateChannelsFromDevice = async (device: ExtendedDevice) => {
+  device.loadingUpdateChannelsFromDevice = true
+  await deviceApi.updateChannelsFromDevice({ device_id: device.device_id })
+  fetchDevices(true)
+  device.loadingUpdateChannelsFromDevice = false
+  ElMessage.success('更新通道成功')
 }
 
 const getStatusType = (status: number) => {
@@ -157,10 +168,13 @@ const paginatedDevices = computed(() => {
             {{ row.channelCount || 0 }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="操作" width="240" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click.stop="showDeviceDetails(row)">
               查看详情
+            </el-button>
+            <el-button type="primary" loading:="row.loadingUpdateChannelsFromDevice"  @click.stop="updateChannelsFromDevice(row)">
+              更新通道
             </el-button>
           </template>
         </el-table-column>
