@@ -38,7 +38,7 @@ clean() {
     echo "Cleaning..."
     rm -rf ${BINARY_NAME}
     rm -rf ${VUE_DIR}/dist
-    rm -rf ${VUE_DIR}/node_modules
+    # rm -rf ${VUE_DIR}/node_modules
     rm -rf objs/html
     rm -rf objs/${CONFIG_FILE}
 }
