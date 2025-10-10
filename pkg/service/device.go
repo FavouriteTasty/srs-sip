@@ -330,6 +330,7 @@ func (p *UniviewParser) ParseChannels(list ...models.ChannelInfo) ([]models.Chan
 type XstriveParser struct{}
 
 func (p *XstriveParser) ParseChannels(list ...models.ChannelInfo) ([]models.ChannelInfo, error) {
+	slog.Debug("ParseChannels: Xstrive", "list", list)
 	return list, nil
 }
 

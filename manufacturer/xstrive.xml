@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <CmdType>Catalog</CmdType>
+  <SN>254683535</SN>
+  <DeviceID>34020000002000000002</DeviceID>
+  <SumNum>2</SumNum>
+  <DeviceList Num="2">
+    <Item>
+      <DeviceID>34020000002000000002</DeviceID>
+      <Name>平台</Name>
+      <Manufacturer>LiveQing</Manufacturer>
+      <Model>LiveGBS</Model>
+      <Owner>Owner</Owner>
+      <CivilCode>3402</CivilCode>
+      <Address>Address</Address>
+      <Parental>0</Parental>
+      <Secrecy>0</Secrecy>
+      <RegisterWay>1</RegisterWay>
+      <Event>ADD</Event>
+    </Item>
+    <Item>
+      <DeviceID>34020000001310000001</DeviceID>
+      <Name>1</Name>
+      <Manufacturer>xstrive</Manufacturer>
+      <Model>IPC</Model>
+      <Owner>Owner</Owner>
+      <CivilCode>3402</CivilCode>
+      <Address>Address</Address>
+      <Parental>0</Parental>
+      <ParentID>34020000002000000002</ParentID>
+      <Secrecy>0</Secrecy>
+      <RegisterWay>1</RegisterWay>
+      <Status>ON</Status>
+      <Event>ADD</Event>
+    </Item>
+  </DeviceList>
+</Response>
