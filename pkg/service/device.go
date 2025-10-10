@@ -233,6 +233,13 @@ func (dm *deviceManager) UpdateChannels(deviceID string, list ...models.ChannelI
 		return fmt.Errorf("device not found: %s", deviceID)
 	}
 
+	// clear ChannelMap
+	device.ChannelMap.Range(func(key, value interface{}) bool {
+		device.ChannelMap.Delete(key)
+		return true
+	})
+
+	slog.Error("UpdateChannels: manufacturer not found", "manufacturer", list[0].Manufacturer)
 	parser, ok := parserRegistry.GetParser(list[0].Manufacturer)
 	if !ok {
 		// 如果找不到特定厂商的解析器，使用通用解析器
