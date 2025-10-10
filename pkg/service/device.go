@@ -238,9 +238,10 @@ func (dm *deviceManager) UpdateChannels(deviceID string, list ...models.ChannelI
 		return true
 	})
 
+	slog.Error("UpdateChannels: manufacturer not found", "manufacturer", list[0].Manufacturer)
 	parser, ok := parserRegistry.GetParser(list[0].Manufacturer)
 	if !ok {
-		return fmt.Errorf("no parser found for manufacturer: %s", list[0].Manufacturer)
+		return fmt.Errorf("par: %s", list[0].Manufacturer)
 	}
 
 	channels, err := parser.ParseChannels(list...)
