@@ -258,6 +258,7 @@ func (dm *deviceManager) UpdateChannels(deviceID string, list ...models.ChannelI
 		if err != nil {
 			return fmt.Errorf("failed to parse channels for %s: %v", manu, err)
 		}
+		slog.Debug("UpdateChannels: parsed channels", "manufacturer", manu, "channels", channels)
 		allChannels = append(allChannels, channels...)
 	}
 
