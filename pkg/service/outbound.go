@@ -211,6 +211,7 @@ func (s *UAS) isPublishing(key string) bool {
 func (s *UAS) Invite(req models.InviteRequest) (*Session, error) {
 	key := fmt.Sprintf("%d:%s:%s:%d:%d:%d:%d", req.MediaServerId, req.DeviceID, req.ChannelID, req.SubStream, req.PlayType, req.StartTime, req.EndTime)
 
+	slog.Debug("Invite key", "key", key, "DeviceId", req.DeviceID)
 	// Check if stream already exists
 	if s.isPublishing(key) {
 		// Stream exists, increase reference count

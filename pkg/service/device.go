@@ -21,8 +21,8 @@ type DeviceInfo struct {
 }
 
 const (
-	DefaultHeartbeatInterval = 60 * time.Second // 心跳检查间隔时间
-	DefaultHeartbeatCount    = 3                // 心跳检查次数
+	DefaultHeartbeatInterval = 60 // 心跳检查间隔时间
+	DefaultHeartbeatCount    = 3  // 心跳检查次数
 )
 
 type deviceManager struct {
@@ -82,6 +82,7 @@ func (dm *deviceManager) checkHeartbeats() {
 
 		// 如果最后心跳时间超过超时时间，则将设备所有通道状态设置为离线
 		if now.Sub(device.lastHeartbeat) > time.Duration(device.HeartBeatInterval*device.HeartBeatCount)*time.Second {
+			slog.Debug("check heartbeat timeout", "device_id", device.DeviceID, "last_heartbeat", device.lastHeartbeat, "now", now, "sub", now.Sub(device.lastHeartbeat), "duration", time.Duration(device.HeartBeatInterval*device.HeartBeatCount)*time.Second)
 			isOffline := false
 			device.ChannelMap.Range(func(key, value interface{}) bool {
 				channel := value.(models.ChannelInfo)

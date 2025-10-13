@@ -134,8 +134,11 @@ func (s *UAS) onMessage(req *sip.Request, tx sip.ServerTransaction) {
 	var body string
 	switch temp.CmdType {
 	case "Keepalive":
-		if d, ok := DM.GetDevice(temp.DeviceID); ok && d.Online {
+		slog.Debug("receive Keepalive", "device_id", temp.DeviceID, "source", req.Source())
+		d, ok := DM.GetDevice(temp.DeviceID)
+		if ok && d.Online {
 			// 更新设备心跳时间
+			slog.Debug("update heartbeat", "device_id", temp.DeviceID, "source", req.Source())
 			DM.UpdateDeviceHeartbeat(temp.DeviceID)
 		} else {
 			tx.Respond(sip.NewResponseFromRequest(req, http.StatusBadRequest, "", nil))
