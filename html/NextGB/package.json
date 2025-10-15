@@ -18,12 +18,13 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.6.2",
+    "dayjs": "^1.11.18",
     "echarts": "^5.4.3",
     "element-plus": "^2.4.2",
     "pinia": "^2.1.7",
     "vue": "^3.3.8",
-    "vue-router": "^4.2.5",
-    "vue-echarts": "^6.6.8"
+    "vue-echarts": "^6.6.8",
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",

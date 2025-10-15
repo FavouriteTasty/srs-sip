@@ -4,7 +4,7 @@ import type * as Types from './types'
 import type { MediaServer } from '@/api/mediaserver/types'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_BASE_URL,
+  baseURL: "/srs-sip/v1",
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
@@ -15,53 +15,56 @@ const api = axios.create({
 export const mediaServerApi = {
   // 获取媒体服务器列表
   getMediaServers: () =>
-    api.get<Types.ApiResponse<MediaServer[]>>('/srs-sip/v1/media-servers'),
+    api.get<Types.ApiResponse<MediaServer[]>>('/media-servers'),
 
   // 添加媒体服务器
   addMediaServer: (data: Omit<MediaServer, 'id' | 'status' | 'created_at'>) => 
-    api.post<Types.ApiResponse<{ msg: string }>>('/srs-sip/v1/media-servers', data),
+    api.post<Types.ApiResponse<{ msg: string }>>('/media-servers', data),
 
   // 删除媒体服务器
   deleteMediaServer: (id: number) =>
-    api.delete<Types.ApiResponse<{ msg: string }>>(`/srs-sip/v1/media-servers/${id}`),
+    api.delete<Types.ApiResponse<{ msg: string }>>(`/media-servers/${id}`),
 
   // 设置默认媒体服务器
   setDefaultMediaServer: (id: number) =>
-    api.post<Types.ApiResponse<{ msg: string }>>(`/srs-sip/v1/media-servers/default/${id}`),
+    api.post<Types.ApiResponse<{ msg: string }>>(`/media-servers/default/${id}`),
 }
 
 // 设备相关 API
 export const deviceApi = {
   // 获取设备列表
-  getDevices: () => api.get<Types.ApiResponse<Types.Device[]>>('/srs-sip/v1/devices'),
+  getDevices: () => api.get<Types.ApiResponse<Types.Device[]>>('/devices'),
 
   // 获取设备通道
   getDeviceChannels: (deviceId: string) =>
-    api.get<Types.ApiResponse<Types.ChannelInfo[]>>(`/srs-sip/v1/devices/${deviceId}/channels`),
+    api.get<Types.ApiResponse<Types.ChannelInfo[]>>(`/devices/${deviceId}/channels`),
 
   // 添加 invite API
   invite: (params: Types.InviteRequest) =>
-    api.post<Types.ApiResponse<Types.InviteResponse>>('/srs-sip/v1/invite', params),
+    api.post<Types.ApiResponse<Types.InviteResponse>>('/invite', params),
 
   // 停止播放
-  bye: (params: Types.ByeRequest) => api.post<Types.ApiResponse<any>>('/srs-sip/v1/bye', params),
+  bye: (params: Types.ByeRequest) => api.post<Types.ApiResponse<any>>('/bye', params),
 
   // 暂停播放
-  pause: (params: Types.PauseRequest) => api.post<Types.ApiResponse<any>>('/srs-sip/v1/pause', params),
+  pause: (params: Types.PauseRequest) => api.post<Types.ApiResponse<any>>('/pause', params),
 
   // 恢复播放
-  resume: (params: Types.ResumeRequest) => api.post<Types.ApiResponse<any>>('/srs-sip/v1/resume', params),
+  resume: (params: Types.ResumeRequest) => api.post<Types.ApiResponse<any>>('/resume', params),
 
   // 设置播放速度
-  speed: (params: Types.SpeedRequest) => api.post<Types.ApiResponse<any>>('/srs-sip/v1/speed', params),
+  speed: (params: Types.SpeedRequest) => api.post<Types.ApiResponse<any>>('/speed', params),
 
   // 云台控制
   controlPTZ: (params: Types.PTZControlRequest) =>
-    api.post<Types.ApiResponse<any>>('/srs-sip/v1/ptz', params),
+    api.post<Types.ApiResponse<any>>('/ptz', params),
 
   // 查询录像
   queryRecord: (params: Types.RecordInfoRequest) =>
-    api.post<Types.ApiResponse<Types.RecordInfoResponse[]>>('/srs-sip/v1/query-record', params),
+    api.post<Types.ApiResponse<Types.RecordInfoResponse[]>>('/query-record', params),
+
+  updateChannelsFromDevice: (params: Types.UpdateChannelsFromDeviceRequest) =>
+    api.post<Types.ApiResponse<{ msg: string }>>('/update-channels', params),
 }
 
 // 请求拦截器

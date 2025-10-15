@@ -108,3 +108,6 @@ export interface PTZControlRequest {
 
 // 媒体服务器类型
 
+export interface UpdateChannelsFromDeviceRequest {
+  device_id: string
+}
