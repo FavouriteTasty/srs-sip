@@ -5,20 +5,6 @@ MAIN_PATH="main/main.go"
 VUE_DIR="html/NextGB"
 CONFIG_FILE="conf/config.yaml"
 
-# 检测操作系统类型
-case "$(uname -s)" in
-    Darwin*)    
-        echo "Mac OS X detected"
-        ;;
-    Linux*)     
-        echo "Linux detected"
-        ;;
-    *)          
-        echo "Unknown operating system"
-        exit 1
-        ;;
-esac
-
 build() {
     echo "Building Go binary..."
     mkdir -p objs
