@@ -27,3 +27,5 @@ objs
 html/*
 !html/NextGB/
 !html/NextGB/**
+
+media_servers.db
