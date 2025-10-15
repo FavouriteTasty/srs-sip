@@ -23,3 +23,7 @@
 hs_err_pid*
 objs
 .idea
+
+html/*
+!html/NextGB/
+!html/NextGB/**
