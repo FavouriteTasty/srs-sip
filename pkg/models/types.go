@@ -78,3 +78,7 @@ type CommonResponse struct {
 	Code int         `json:"code"`
 	Data interface{} `json:"data"`
 }
+
+type UpdateChannelsRequest struct {
+	DeviceID string `json:"device_id"`
+}
