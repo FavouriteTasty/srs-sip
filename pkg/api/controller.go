@@ -17,6 +17,7 @@ func (h *HttpApiServer) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/devices", h.ApiListDevices).Methods(http.MethodGet)
 	router.HandleFunc("/devices/{id}/channels", h.ApiGetChannelByDeviceId).Methods(http.MethodGet)
 	router.HandleFunc("/channels", h.ApiGetAllChannels).Methods(http.MethodGet)
+	router.HandleFunc("/channels", h.ApiGetChannelByDeviceIdsAndChannelIds).Methods(http.MethodPost)
 
 	router.HandleFunc("/invite", h.ApiInvite).Methods(http.MethodPost)
 	router.HandleFunc("/bye", h.ApiBye).Methods(http.MethodPost)
@@ -97,6 +98,22 @@ func (h *HttpApiServer) ApiGetChannelByDeviceId(w http.ResponseWriter, r *http.R
 func (h *HttpApiServer) ApiGetAllChannels(w http.ResponseWriter, r *http.Request) {
 	channels := service.DM.GetAllVideoChannels()
 	h.RespondWithJSON(w, 0, channels)
+}
+func (h *HttpApiServer) ApiGetChannelByDeviceIdsAndChannelIds(w http.ResponseWriter, r *http.Request) {
+	var req models.GetChannelByDeviceIdsAndChannelIdsRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		h.RespondWithJSON(w, http.StatusBadRequest, map[string]string{"msg": err.Error()})
+		return
+	}
+	responses := make([]models.ChannelInfo, 0)
+	for _, req := range req.Requests {
+		channel, ok := service.DM.ApiGetChannelByDeviceIdAndChannelId(req.DeviceID, req.ChannelID)
+		if ok {
+			responses = append(responses, channel)
+		}
+	}
+	h.RespondWithJSON(w, 0, responses)
 }
 
 func (h *HttpApiServer) ApiInvite(w http.ResponseWriter, r *http.Request) {

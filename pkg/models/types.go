@@ -82,3 +82,7 @@ type CommonResponse struct {
 type UpdateChannelsRequest struct {
 	DeviceID string `json:"device_id"`
 }
+
+type GetChannelByDeviceIdsAndChannelIdsRequest struct {
+	Requests []BaseRequest `json:"requests"`
+}

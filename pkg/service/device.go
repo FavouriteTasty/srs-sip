@@ -344,6 +344,22 @@ func (dm *deviceManager) ApiGetChannelByDeviceId(deviceID string) []models.Chann
 	return channels
 }
 
+func (dm *deviceManager) ApiGetChannelByDeviceIdAndChannelId(deviceID, channelID string) (models.ChannelInfo, bool) {
+	device, ok := dm.GetDevice(deviceID)
+	if !ok {
+		slog.Info("Device not found", "device_id", deviceID)
+		return models.ChannelInfo{}, false
+	}
+
+	channel, ok := device.ChannelMap.Load(channelID)
+	if !ok {
+		slog.Info("Channel not found", "device_id", deviceID, "channel_id", channelID)
+		return models.ChannelInfo{}, false
+	}
+
+	return channel.(models.ChannelInfo), true
+}
+
 func (dm *deviceManager) GetAllVideoChannels() []models.ChannelInfo {
 	channels := make([]models.ChannelInfo, 0)
 	dm.devices.Range(func(key, value interface{}) bool {
