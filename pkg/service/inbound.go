@@ -146,7 +146,7 @@ func (s *UAS) onMessage(req *sip.Request, tx sip.ServerTransaction) {
 		}
 	case "SensorCatalog": // 兼容宇视，非国标
 	case "Catalog":
-		DM.UpdateChannels(temp.DeviceID, temp.DeviceList...)
+		DM.UpsertChannels(temp.DeviceID, temp.DeviceList)
 		//go s.AutoInvite(temp.DeviceID, temp.DeviceList...)
 	case "ConfigDownload":
 		DM.UpdateDeviceConfig(temp.DeviceID, &temp.BasicParam)

@@ -270,6 +270,51 @@ func (dm *deviceManager) UpdateChannels(deviceID string, list ...models.ChannelI
 	return nil
 }
 
+// UpsertChannels 仅对传入的通道做解析与写入；不会清空整个 ChannelMap。
+// removedIDs（可选）表示需要被删除的通道 DeviceID 列表（例如上游给了删除事件）。
+func (dm *deviceManager) UpsertChannels(deviceID string, list []models.ChannelInfo, removedIDs ...string) error {
+	device, ok := dm.GetDevice(deviceID)
+	if !ok {
+		return fmt.Errorf("device not found: %s", deviceID)
+	}
+
+	for _, id := range removedIDs {
+		device.ChannelMap.Delete(id)
+	}
+
+	groups := make(map[string][]models.ChannelInfo)
+	for _, item := range list {
+		manu := item.Manufacturer
+		if manu == "" {
+			manu = "Common"
+		}
+		groups[manu] = append(groups[manu], item)
+	}
+
+	for manu, items := range groups {
+		parser, ok := parserRegistry.GetParser(manu)
+		if !ok {
+			if parser, ok = parserRegistry.GetParser("Common"); !ok {
+				return fmt.Errorf("no parser for %s and Common not available", manu)
+			}
+			slog.Info("Using common parser for unknown manufacturer", "manufacturer", manu)
+		}
+
+		parsed, err := parser.ParseChannels(items...)
+		if err != nil {
+			return fmt.Errorf("failed to parse channels for %s: %v", manu, err)
+		}
+
+		for _, ch := range parsed {
+			device.ChannelMap.Store(ch.DeviceID, ch)
+		}
+		slog.Debug("UpsertChannels: parsed channels", "manufacturer", manu, "count", len(parsed))
+	}
+
+	dm.devices.Store(deviceID, device)
+	return nil
+}
+
 func (dm *deviceManager) ApiGetChannelByDeviceId(deviceID string) []models.ChannelInfo {
 	device, ok := dm.GetDevice(deviceID)
 	if !ok {
