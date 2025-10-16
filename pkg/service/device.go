@@ -406,7 +406,9 @@ func (p *CommonParser) ParseChannels(list ...models.ChannelInfo) ([]models.Chann
 
 func init() {
 	parserRegistry.RegisterParser("Hikvision", &HikvisionParser{})
+	parserRegistry.RegisterParser("hikvision", &HikvisionParser{})
 	parserRegistry.RegisterParser("DAHUA", &DahuaParser{})
 	parserRegistry.RegisterParser("UNIVIEW", &UniviewParser{})
 	parserRegistry.RegisterParser("xstrive", &XstriveParser{})
+	parserRegistry.RegisterParser("Common", &CommonParser{})
 }
