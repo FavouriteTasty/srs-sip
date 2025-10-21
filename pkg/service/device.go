@@ -372,6 +372,15 @@ func (dm *deviceManager) GetAllVideoChannels() []models.ChannelInfo {
 		device.ChannelMap.Range(func(key, value interface{}) bool {
 			channel := value.(models.ChannelInfo)
 			channelCount++
+			slog.Debug("Pre: Found channel in device",
+				"device_id", deviceID,
+				"channel_key", key,
+				"channel_id", channel.DeviceID,
+				"channel_name", channel.Name,
+				"channel_status", channel.Status,
+				"manufacturer", channel.Manufacturer,
+				"parental", channel.Parental,
+				"is_video_channel", channel.DeviceID)
 			isVideoChannel := utils.IsVideoChannel(channel.DeviceID)
 			slog.Debug("Found channel in device",
 				"device_id", deviceID,
