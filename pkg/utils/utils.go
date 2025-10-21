@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/rand"
+	"log/slog"
 	"math/big"
 )
 
@@ -27,8 +28,10 @@ func CreateSSRC(isLive bool) string {
 
 // @see GB/T28181—2016 附录D 统一编码规则
 func IsVideoChannel(channelID string) bool {
+	slog.Debug("IsVideoChannel", "channel_id", channelID)
 	deviceType := channelID[10:13]
-	return deviceType == "131" || deviceType == "132"
+	return deviceType == "131" || deviceType == "132" || deviceType == "118"
+	// 118
 }
 
 // GetSessionName 根据播放类型返回会话名称
