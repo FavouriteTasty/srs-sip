@@ -68,7 +68,7 @@ func (s *UAS) onRegister(req *sip.Request, tx sip.ServerTransaction) {
 			return
 		}
 		if expSec == 0 {
-			isUnregister = true
+			isUnregister = false
 		}
 	} else {
 		slog.Error("empty expires header")
