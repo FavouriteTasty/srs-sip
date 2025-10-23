@@ -1,0 +1,25 @@
+[Unit]
+Description=SRS GB28181 server
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# 请把下面的路径替换为你的可执行文件的绝对路径
+WorkingDirectory=/path/to/your/project
+ExecStart=/path/to/your/project/objs/srs -c /path/to/your/project/conf/gb28181.conf
+# 如果你需要把 stdout/stderr 直接写到文件（非 journald），可以把上面改为：
+# ExecStart=/bin/sh -c '/path/to/objs/srs -c /path/to/conf/gb28181.conf >> /var/log/srs.log 2>&1'
+Restart=always
+RestartSec=5
+# 运行为 root（默认），不要用 User=，除非你想指定普通用户并处理权限
+#User=youruser
+
+# resource limits
+LimitNOFILE=65536
+
+# ensure killing the whole cgroup on stop
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target

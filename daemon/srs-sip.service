@@ -1,0 +1,16 @@
+[Unit]
+Description=SRS-SIP service
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/path/to/your/project
+ExecStart=/path/to/your/project/srs-sip -c /path/to/your/project/conf/conf.yml
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target
