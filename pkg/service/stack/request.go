@@ -1,6 +1,8 @@
 package stack
 
 import (
+	"fmt"
+
 	"github.com/emiago/sipgo/sip"
 	"github.com/ossrs/go-oryx-lib/errors"
 )
@@ -10,6 +12,8 @@ type OutboundConfig struct {
 	Via       string
 	From      string
 	To        string
+	Host      string
+	Port      int
 }
 
 func NewRequest(method sip.RequestMethod, body []byte, conf OutboundConfig) (*sip.Request, error) {
@@ -18,16 +22,18 @@ func NewRequest(method sip.RequestMethod, body []byte, conf OutboundConfig) (*si
 	}
 
 	dest := conf.Via
-	to := sip.Uri{User: conf.To, Host: conf.To[:10]}
-	from := &sip.Uri{User: conf.From, Host: conf.From[:10]}
+	// to := sip.Uri{User: conf.To, Host: conf.To[:10]}
+	to := sip.Uri{User: conf.To, Host: conf.Via}
+	from := sip.Uri{User: conf.From, Host: conf.From[:10]}
+	contact := sip.Uri{User: conf.From, Host: fmt.Sprintf("%s:%d", conf.Host, conf.Port)}
 
-	fromHeader := &sip.FromHeader{Address: *from, Params: sip.NewParams()}
+	fromHeader := &sip.FromHeader{Address: from, Params: sip.NewParams()}
 	fromHeader.Params.Add("tag", sip.GenerateTagN(16))
 
 	req := sip.NewRequest(method, to)
 	req.AppendHeader(fromHeader)
 	req.AppendHeader(&sip.ToHeader{Address: to})
-	req.AppendHeader(&sip.ContactHeader{Address: *from})
+	req.AppendHeader(&sip.ContactHeader{Address: contact})
 	req.AppendHeader(sip.NewHeader("Max-Forwards", "70"))
 	req.SetBody(body)
 	req.SetDestination(dest)

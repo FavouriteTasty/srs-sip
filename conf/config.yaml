@@ -8,7 +8,7 @@ common:
 gb28181:
   serial: "34020000002000000001"
   realm: "3402000000"
-  host: "0.0.0.0"
+  host: "192.168.31.48"
   port: 5060
   auth:
     enable: false

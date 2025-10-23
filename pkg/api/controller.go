@@ -124,7 +124,7 @@ func (h *HttpApiServer) ApiInvite(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := h.sipSvr.Uas.Invite(req)
+	session, err := h.sipSvr.Uas.Invite(req, h.conf.GB28181.Host, h.conf.GB28181.Port)
 	if err != nil {
 		h.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"msg": err.Error()})
 		return

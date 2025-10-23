@@ -208,7 +208,7 @@ func (s *UAS) isPublishing(key string) bool {
 	return true
 }
 
-func (s *UAS) Invite(req models.InviteRequest) (*Session, error) {
+func (s *UAS) Invite(req models.InviteRequest, host string, port int) (*Session, error) {
 	key := fmt.Sprintf("%d:%s:%s:%d:%d:%d:%d", req.MediaServerId, req.DeviceID, req.ChannelID, req.SubStream, req.PlayType, req.StartTime, req.EndTime)
 
 	slog.Debug("Invite key", "key", key, "DeviceId", req.DeviceID)
@@ -247,9 +247,11 @@ func (s *UAS) Invite(req models.InviteRequest) (*Session, error) {
 		"u=" + req.ChannelID + ":0",
 		"c=IN IP4 " + mediaHost,
 		"t=" + fmt.Sprintf("%d %d", req.StartTime, req.EndTime),
-		fmt.Sprintf("m=video %d TCP/RTP/AVP 96", mediaPort),
+		fmt.Sprintf("m=video %d TCP/RTP/AVP 96 97 98", mediaPort),
 		"a=recvonly",
 		"a=rtpmap:96 PS/90000",
+		"a=rtpmap:97 MPEG4/90000",
+		"a=rtpmap:98 H264/90000",
 		"y=" + ssrc,
 		"\r\n",
 	}
@@ -265,11 +267,14 @@ func (s *UAS) Invite(req models.InviteRequest) (*Session, error) {
 
 	subject := fmt.Sprintf("%s:%s,%s:0", req.ChannelID, ssrc, s.conf.GB28181.Serial)
 
+	slog.Debug("Invite Request", "Via", d.SourceAddr, "To", req.DeviceID, "From", s.conf.GB28181.Serial, "Transport", d.NetworkType)
 	reqInvite, err := stack.NewInviteRequest([]byte(strings.Join(sdpInfo, "\r\n")), subject, stack.OutboundConfig{
 		Via:       d.SourceAddr,
 		To:        d.DeviceID,
 		From:      s.conf.GB28181.Serial,
 		Transport: d.NetworkType,
+		Host:      host,
+		Port:      port,
 	})
 	if err != nil {
 		return nil, errors.Wrapf(err, "build invite request error")
