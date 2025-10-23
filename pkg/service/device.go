@@ -471,7 +471,14 @@ type CommonParser struct{}
 
 func (p *CommonParser) ParseChannels(list ...models.ChannelInfo) ([]models.ChannelInfo, error) {
 	// 通用解析器：直接返回所有通道，不做特殊处理
-	return list, nil
+	videoChannels := make([]models.ChannelInfo, 0)
+	for _, channel := range list {
+		// 只有DeviceID长度为20的通道，才是视频通道
+		if len(channel.DeviceID) == 20 {
+			videoChannels = append(videoChannels, channel)
+		}
+	}
+	return videoChannels, nil
 }
 
 func init() {
