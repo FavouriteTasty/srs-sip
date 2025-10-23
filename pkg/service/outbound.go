@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"log/slog"
+	"regexp"
 	"strings"
 	"time"
 
@@ -13,6 +14,15 @@ import (
 	"github.com/ossrs/srs-sip/pkg/service/stack"
 	"github.com/ossrs/srs-sip/pkg/utils"
 )
+
+func extractYValue(body string) string {
+	re := regexp.MustCompile(`(?m)y=([0-9]{10})`)
+	match := re.FindStringSubmatch(body)
+	if len(match) > 1 {
+		return match[1]
+	}
+	return ""
+}
 
 type Session struct {
 	ID        string
@@ -283,6 +293,12 @@ func (s *UAS) Invite(req models.InviteRequest, host string, port int) (*Session,
 	res, err := s.handleSipTransaction(reqInvite)
 	if err != nil {
 		return nil, err
+	}
+
+	res_ssrc := extractYValue(string(res.Body()))
+	res_mediaPort, err := s.media.Publish(res_ssrc, res_ssrc)
+	if err != nil {
+		return nil, errors.Wrapf(err, "res api gb publish request error, mediaPort: %d %s", res_mediaPort, res_ssrc)
 	}
 
 	ack := sip.NewAckRequest(reqInvite, res, nil)
