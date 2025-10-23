@@ -212,7 +212,7 @@ func (h *HttpApiServer) ApiPTZControl(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		h.RespondWithJSON(w, code, map[string]string{"msg": msg})
 	}()
-	if err := h.sipSvr.Uas.ControlPTZ(req.DeviceID, req.ChannelID, req.PTZ, req.Speed); err != nil {
+	if err := h.sipSvr.Uas.ControlPTZ(req.DeviceID, req.ChannelID, req.PTZ, req.Speed, h.conf.GB28181.Host, h.conf.GB28181.Port); err != nil {
 		code = http.StatusInternalServerError
 		msg = err.Error()
 		return
@@ -228,7 +228,7 @@ func (h *HttpApiServer) ApiQueryRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	records, err := h.sipSvr.Uas.QueryRecord(req.DeviceID, req.ChannelID, req.StartTime, req.EndTime)
+	records, err := h.sipSvr.Uas.QueryRecord(req.DeviceID, req.ChannelID, req.StartTime, req.EndTime, h.conf.GB28181.Host, h.conf.GB28181.Port)
 	if err != nil {
 		h.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"msg": err.Error()})
 		return
@@ -309,7 +309,7 @@ func (h *HttpApiServer) ApiUpdateChannelsFromDevice(w http.ResponseWriter, r *ht
 		return
 	}
 
-	if err := h.sipSvr.Uas.UpdateChannelsFromDevice(req.DeviceID); err != nil {
+	if err := h.sipSvr.Uas.UpdateChannelsFromDevice(req.DeviceID, h.conf.GB28181.Host, h.conf.GB28181.Port); err != nil {
 		h.RespondWithJSON(w, http.StatusInternalServerError, map[string]string{"msg": err.Error()})
 		return
 	}

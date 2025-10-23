@@ -89,8 +89,8 @@ func (s *UAS) onRegister(req *sip.Request, tx sip.ServerTransaction) {
 			s.respondRegister(req, http.StatusOK, "OK", tx)
 			slog.Info(fmt.Sprintf("Register success %s %s", id, req.Source()))
 
-			go s.ConfigDownload(id)
-			go s.Catalog(id)
+			go s.ConfigDownload(id, s.conf.GB28181.Host, s.conf.GB28181.Port)
+			go s.Catalog(id, s.conf.GB28181.Host, s.conf.GB28181.Port)
 		} else {
 			if d.SourceAddr != "" && !s.isSameIP(d.SourceAddr, req.Source()) {
 				slog.Error("Device already registered", "device_id", id, "old_source", d.SourceAddr, "new_source", req.Source())

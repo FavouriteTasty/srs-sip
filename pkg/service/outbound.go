@@ -379,7 +379,7 @@ func (s *UAS) Speed(req models.SpeedRequest) error {
 	return nil
 }
 
-func (s *UAS) Catalog(deviceID string) error {
+func (s *UAS) Catalog(deviceID string, host string, port int) error {
 	var CatalogXML = `<?xml version="1.0"?><Query>
 	<CmdType>Catalog</CmdType>
 	<SN>%d</SN>
@@ -399,6 +399,8 @@ func (s *UAS) Catalog(deviceID string) error {
 		To:        d.DeviceID,
 		From:      s.conf.GB28181.Serial,
 		Transport: d.NetworkType,
+		Host:      host,
+		Port:      port,
 	})
 	if err != nil {
 		return errors.Wrapf(err, "build catalog request error")
@@ -434,7 +436,7 @@ func (s *UAS) waitAnswer(tx sip.ClientTransaction) (*sip.Response, error) {
 // <ControlPriority>150</ControlPriority>
 // </Info>
 // </Control>
-func (s *UAS) ControlPTZ(deviceID, channelID, ptz, speed string) error {
+func (s *UAS) ControlPTZ(deviceID, channelID, ptz, speed string, host string, port int) error {
 	var ptzXML = `<?xml version="1.0"?>
 	<Control>
 	<CmdType>DeviceControl</CmdType>
@@ -465,6 +467,8 @@ func (s *UAS) ControlPTZ(deviceID, channelID, ptz, speed string) error {
 		To:        d.DeviceID,
 		From:      s.conf.GB28181.Serial,
 		Transport: d.NetworkType,
+		Host:      host,
+		Port:      port,
 	})
 	if err != nil {
 		return errors.Wrapf(err, "build ptz request error")
@@ -475,7 +479,7 @@ func (s *UAS) ControlPTZ(deviceID, channelID, ptz, speed string) error {
 }
 
 // QueryRecord 查询录像记录
-func (s *UAS) QueryRecord(deviceID, channelID string, startTime, endTime int64) ([]*models.Record, error) {
+func (s *UAS) QueryRecord(deviceID, channelID string, startTime, endTime int64, host string, port int) ([]*models.Record, error) {
 	var queryXML = `<?xml version="1.0"?>
 	<Query>
 	<CmdType>RecordInfo</CmdType>
@@ -504,6 +508,8 @@ func (s *UAS) QueryRecord(deviceID, channelID string, startTime, endTime int64) 
 		To:        d.DeviceID,
 		From:      s.conf.GB28181.Serial,
 		Transport: d.NetworkType,
+		Host:      host,
+		Port:      port,
 	})
 	if err != nil {
 		return nil, errors.Wrapf(err, "build query request error")
@@ -550,7 +556,7 @@ func (s *UAS) QueryRecord(deviceID, channelID string, startTime, endTime int64) 
 // <DeviceID>33010602001310019325</DeviceID>
 // </Control>
 
-func (s *UAS) ConfigDownload(deviceID string) error {
+func (s *UAS) ConfigDownload(deviceID string, host string, port int) error {
 	var deviceConfigXML = `<?xml version="1.0"?>
 	<Control>
 	<CmdType>ConfigDownload</CmdType>
@@ -572,6 +578,8 @@ func (s *UAS) ConfigDownload(deviceID string) error {
 		To:        d.DeviceID,
 		From:      s.conf.GB28181.Serial,
 		Transport: d.NetworkType,
+		Host:      host,
+		Port:      port,
 	})
 	if err != nil {
 		return errors.Wrapf(err, "build device config request error")
@@ -582,7 +590,7 @@ func (s *UAS) ConfigDownload(deviceID string) error {
 }
 
 // UpdateChannelsFromDevice 从下级平台更新设备通道列表
-func (s *UAS) UpdateChannelsFromDevice(deviceID string) error {
+func (s *UAS) UpdateChannelsFromDevice(deviceID string, host string, port int) error {
 	var deviceConfigXML = `<?xml version="1.0"?>
 	<Query>
 	<CmdType>Catalog</CmdType>
@@ -603,6 +611,8 @@ func (s *UAS) UpdateChannelsFromDevice(deviceID string) error {
 		To:        d.DeviceID,
 		From:      s.conf.GB28181.Serial,
 		Transport: d.NetworkType,
+		Host:      host,
+		Port:      port,
 	})
 	if err != nil {
 		return errors.Wrapf(err, "update catalog from device request error")
