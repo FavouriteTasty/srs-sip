@@ -286,6 +286,11 @@ func (s *UAS) Invite(req models.InviteRequest, host string, port int) (*Session,
 	}
 
 	ack := sip.NewAckRequest(reqInvite, res, nil)
+
+	// Hikvision 设备需要增加CSeq
+	cseq := ack.CSeq()
+	cseq.SeqNo += 1
+
 	s.sipCli.WriteRequest(ack)
 
 	session := Session{
