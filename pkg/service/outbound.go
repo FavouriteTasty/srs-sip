@@ -296,9 +296,12 @@ func (s *UAS) Invite(req models.InviteRequest, host string, port int) (*Session,
 	}
 
 	resSsrc := extractYValue(string(res.Body()))
-	resMediaPort, err := s.media.Publish(resSsrc, resSsrc)
-	if err != nil {
-		return nil, errors.Wrapf(err, "res api gb publish request error, mediaPort: %d %s", resMediaPort, resSsrc)
+	if ssrc != resSsrc {
+		resMediaPort, err := s.media.Publish(resSsrc, resSsrc)
+		if err != nil {
+			return nil, errors.Wrapf(err, "res api gb publish request error, mediaPort: %d %s", resMediaPort, resSsrc)
+		}
+		s.media.Unpublish(ssrc)
 	}
 
 	ack := sip.NewAckRequest(reqInvite, res, nil)
